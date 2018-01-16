@@ -1,3 +1,3 @@
 
-class Rep_unit:
-    def __init__(self,):
+class Monomer:
+    def __init__(self, n, f=1.0):
