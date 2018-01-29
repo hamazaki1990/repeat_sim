@@ -1,10 +1,9 @@
-from decimal import Decimal
 import random
 import copy
 
 
 class Monomer:
-    mutationrate = 0.01
+    mutationrate = 1
 
     def __init__(self, n, f=1.0):
         self._id = n
@@ -51,6 +50,7 @@ def main():
     print(test4.get_id())
     print(test4.get_genotype())
     print(test4.get_fitness())
+
 
 if __name__ == '__main__':
     main()
