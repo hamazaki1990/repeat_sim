@@ -19,7 +19,7 @@ class Monomer:
     def get_genotype(self):
         return self._genotype
 
-    def acquire_mutation(self, s=0.0):
+    def acquire_mutation(self, s=0.0):  # add mutation that raises fitness by s
         r = random.random()
         next_ind = copy.deepcopy(self)
         next_genotype = next_ind._genotype

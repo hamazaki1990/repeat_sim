@@ -11,12 +11,17 @@ class Tandem_repeat:
     def get_ids(self):
         return self._repeats
 
+    def get_length(self):
+        return len(self._repeats)
+
     def get_fitnesses(self):
         fitness = [x.get_fitness() for x in self._repeats]
         return fitness
 
-    def get_length(self):
-        return len(self._repeats)
+    def cal_fitness(self):
+        l = len(self._repeats)
+        f = [x.get_fitness() for x in self._repeats]
+        return sum(f)/l
 
 
 def main():
@@ -28,7 +33,7 @@ def main():
     print(repeat2.get_ids())
     print(repeat2.get_fitnesses())
     print(repeat2.get_length())
-
+    print(repeat2.cal_fitness())
 
 if __name__ == '__main__':
     main()
