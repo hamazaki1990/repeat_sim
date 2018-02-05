@@ -8,4 +8,7 @@ class Diploid:
         self._diploid = [Tandem_repeat(l1, i1, s1), Tandem_repeat(l2)]
 
     def gene_conversion(self):
-        
+        r = random.random()
+        if r < Diploid.conversionrate:
+            i = random.
+            start =
