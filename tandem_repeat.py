@@ -34,6 +34,8 @@ def main():
     print(repeat2.get_fitnesses())
     print(repeat2.get_length())
     print(repeat2.cal_fitness())
+    print(repeat2[0])
+
 
 if __name__ == '__main__':
     main()
