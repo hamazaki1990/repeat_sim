@@ -37,8 +37,7 @@ class Tandem_repeat:
         r = random.random()
         next_repeats = copy.deepcopy(self)
         if r < Tandem_repeat.mutationrate:
-            l = len(next_repeats._repeats)
-            i = int(r*l/Tandem_repeat.mutationrate)
+            i = random.randrange(len(next_repeats._repeats))
             next_monomer = next_repeats._repeats[i]
             next_monomer._fitness += s
             next_monomer._genotype.append(random.random())
@@ -48,18 +47,19 @@ class Tandem_repeat:
     def slippage(self):
         r = random.random()
         next_repeats = copy.deepcopy(self)
-        if r < Tandem_repeat.mutationrate:
-            l = len(next_repeats._repeats)
-            i = int(r*l/Tandem_repeat.mutationrate)
-            
+        if r < Tandem_repeat.slippagerate:
+            i = random.randrange(len(next_repeats._repeats))
+            next_repeats._repeats.pop(i)
+        return next_repeats
 
-#    def gene_conversion(self):
-#        r = random.random()
-#        if r < Diploid.conversionrate:
-#            donor = random.choice()
-#            recip = random.randint(0, 1)
-#            next_diploid[recip] = donor
-#        return next_diploid
+    def gene_conversion(self):
+        r = random.random()
+        next_repeats = copy.deepcopy(self)
+        if r < Tandem_repeat.conversionrate:
+            i = random.randrange(len(next_repeats._repeats))
+            j = random.randrange(len(next_repeats._repeats))
+            next_repeats._repeats[i] = next_repeats._repeats[j]
+        return next_repeats
 
 
 def main():
@@ -76,6 +76,18 @@ def main():
     print(repeat3.get_ids())
     print(repeat3.get_fitnesses())
     print(repeat3.get_genotypes())
+    repeat4 = repeat3.slippage()
+    print(repeat4.get_ids())
+    print(repeat4.get_fitnesses())
+    print(repeat4.get_genotypes())
+    repeat5 = repeat3.gene_conversion()
+    print(repeat5.get_ids())
+    print(repeat5.get_fitnesses())
+    print(repeat5.get_genotypes())
+    repeat6 = repeat5.gene_conversion()
+    print(repeat6.get_ids())
+    print(repeat6.get_fitnesses())
+    print(repeat6.get_genotypes())
 
 
 if __name__ == '__main__':
