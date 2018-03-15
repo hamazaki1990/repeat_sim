@@ -4,9 +4,6 @@ from monomer import Monomer
 
 
 class Tandem_repeat:
-    mutationrate = 0.01
-    conversionrate = 0.01
-    slippagerate = 0.01
 
     def __init__(self, l, i=None, s=0.0):
         repeats = [Monomer(x) for x in range(l)]
@@ -33,33 +30,6 @@ class Tandem_repeat:
         f = [x.get_fitness() for x in self._repeats]
         return sum(f)/l
 
-    def acquire_mutation(self, s=0.0):  # add mutation that raises fitness by s
-        r = random.random()
-        next_repeats = copy.deepcopy(self)
-        if r < Tandem_repeat.mutationrate:
-            i = random.randrange(len(next_repeats._repeats))
-            next_monomer = next_repeats._repeats[i]
-            next_monomer._fitness += s
-            next_monomer._genotype.append(random.random())
-            next_repeats._repeats[i] = next_monomer
-        return next_repeats
-
-    def slippage(self):
-        r = random.random()
-        next_repeats = copy.deepcopy(self)
-        if r < Tandem_repeat.slippagerate:
-            i = random.randrange(len(next_repeats._repeats))
-            next_repeats._repeats.pop(i)
-        return next_repeats
-
-    def gene_conversion(self):
-        r = random.random()
-        next_repeats = copy.deepcopy(self)
-        if r < Tandem_repeat.conversionrate:
-            i = random.randrange(len(next_repeats._repeats))
-            j = random.randrange(len(next_repeats._repeats))
-            next_repeats._repeats[i] = next_repeats._repeats[j]
-        return next_repeats
 
 
 def main():
