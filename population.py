@@ -16,14 +16,12 @@ class Population:
         fitness = [x.cal_fitness() for x in self._inds]
         return fitness
 
-    def get_fitnesses(self):
+    def get_monomer_fitnesses(self):
         fitness = [x.get_fitnesses() for x in self._inds]
         return fitness
 
-
-
     def get_genotypes(self):
-        genotypes = [x.get_genotype() for x in self._inds]
+        genotypes = [x.get_genotypes() for x in self._inds]
         return genotypes
 
     def next_genwf(self):
