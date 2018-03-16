@@ -1,5 +1,3 @@
-import random
-import copy
 from monomer import Monomer
 
 
@@ -11,21 +9,21 @@ class Tandem_repeat:
             repeats[i] = Monomer(i, 1+s)
         self._repeats = repeats
 
-    def get_ids(self):
+    def get_repeat_ids(self):
         return self._repeats
 
-    def get_length(self):
+    def get_repeat_length(self):
         return len(self._repeats)
 
-    def get_fitnesses(self):
+    def get_repeat_fitnesses(self):
         fitness = [x.get_fitness() for x in self._repeats]
         return fitness
 
-    def get_genotypes(self):
+    def get_repeat_genotypes(self):
         genotype = [x.get_genotype() for x in self._repeats]
         return genotype
 
-    def cal_fitness(self):
+    def cal_repeat_fitness(self):
         l = len(self._repeats)
         f = [x.get_fitness() for x in self._repeats]
         return sum(f)/l
