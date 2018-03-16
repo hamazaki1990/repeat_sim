@@ -20,12 +20,12 @@ class Population:
         fitness = [x.get_fitnesses() for x in self._inds]
         return fitness
 
-    def get_genotypes(self):
+    def get_inds_genotypes(self):
         genotypes = [x.get_genotypes() for x in self._inds]
         return genotypes
 
     def next_genwf(self):
-        fitness = [x.get_fitness() for x in self._inds]
+        fitness = [x.cal_fitness() for x in self._inds]
         size = len(self._inds)
         cumsum_fitness = [sum(fitness[:i]) for i in range(1, size + 1)]
         next_generation = []
