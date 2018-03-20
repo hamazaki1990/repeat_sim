@@ -1,21 +1,42 @@
-class Monomer:
+import random
+import copy
 
-    def __init__(self, n, f=1.0):
-        self._id = n
-        self._fitness = f
-        self._genotype = []
+
+class Monomer:
+    mutationrate = 1
+
+    def __init__(self, id_number, fitness=1.0):
+        self.__id = id_number
+        self.__fitness = fitness
+        self.__genotype = []
 
     def get_id(self):
-        return self._id
+        return self.__id
 
     def get_fitness(self):
-        return self._fitness
+        return self.__fitness
 
     def get_genotype(self):
-        return self._genotype
+        return self.__genotype
+
+    def copy_self(self):
+        next_ind = copy.deepcopy(self)
+        return next_ind
+
+    def acquire_mutation(self, s=0.0):
+        r = random.random()
+        next_ind = self.copy_self()
+        next_genotype = next_ind.__genotype
+        next_fitness = next_ind.__fitness
+        if r < Monomer.mutationrate:
+            next_genotype.append(random.random())
+            next_fitness += s
+        next_ind.__genotype = next_genotype
+        next_ind.__fitness = next_fitness
+        return next_ind
 
     def __repr__(self):
-        return str(self._id)
+        return "Monomer(id:{})".format(self.__id)
 
 
 def main():
@@ -33,6 +54,7 @@ def main():
     print(test4.get_id())
     print(test4.get_genotype())
     print(test4.get_fitness())
+    print(test4)
 
 
 if __name__ == '__main__':
