@@ -95,5 +95,6 @@ def main():
     print(repeat6.get_genotypes())
     print(repeat6.cal_fitness())
 
+
 if __name__ == '__main__':
     main()
