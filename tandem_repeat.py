@@ -4,62 +4,56 @@ from monomer import Monomer
 
 
 class Tandem_repeat:
-    mutationrate = 0.01
-    conversionrate = 0.01
-    slippagerate = 0.01
+    mutationrate = 1
+    conversionrate = 1
+    slippagerate = 1
 
     def __init__(self, l, i=None, s=0.0):
         repeats = [Monomer(x) for x in range(l)]
         if i is not None:
             repeats[i] = Monomer(i, 1+s)
-        self._repeats = repeats
+        self.__repeats = repeats
 
     def get_ids(self):
-        return self._repeats
+        return [x.get_id() for x in self.__repeats]
 
     def get_length(self):
-        return len(self._repeats)
+        return len(self.__repeats)
 
     def get_fitnesses(self):
-        fitness = [x.get_fitness() for x in self._repeats]
+        fitness = [x.get_fitness() for x in self.__repeats]
         return fitness
 
     def get_genotypes(self):
-        genotype = [x.get_genotype() for x in self._repeats]
+        genotype = [x.get_genotype() for x in self.__repeats]
         return genotype
 
     def cal_fitness(self):
-        l = len(self._repeats)
-        f = [x.get_fitness() for x in self._repeats]
+        l = len(self.__repeats)
+        f = [x.get_fitness() for x in self.__repeats]
         return sum(f)/l
 
     def acquire_mutation(self, s=0.0):  # add mutation that raises fitness by s
         r = random.random()
-        next_repeats = copy.deepcopy(self)
         if r < Tandem_repeat.mutationrate:
-            i = random.randrange(len(next_repeats._repeats))
-            next_monomer = next_repeats._repeats[i]
-            next_monomer._fitness += s
-            next_monomer._genotype.append(random.random())
-            next_repeats._repeats[i] = next_monomer
-        return next_repeats
+            i = random.randrange(len(self.__repeats))
+            self.__repeats[i] = self.__repeats[i].acquire_mutation(s)
+        return self
 
     def slippage(self):
         r = random.random()
-        next_repeats = copy.deepcopy(self)
         if r < Tandem_repeat.slippagerate:
-            i = random.randrange(len(next_repeats._repeats))
-            next_repeats._repeats.pop(i)
-        return next_repeats
+            i = random.randrange(self.get_length())
+            self.__repeats.pop(i)
+        return self
 
     def gene_conversion(self):
         r = random.random()
-        next_repeats = copy.deepcopy(self)
         if r < Tandem_repeat.conversionrate:
-            i = random.randrange(len(next_repeats._repeats))
-            j = random.randrange(len(next_repeats._repeats))
-            next_repeats._repeats[i] = next_repeats._repeats[j]
-        return next_repeats
+            i = random.randrange(self.get_length())
+            j = random.randrange(self.get_length())
+            self.__repeats[i] = self.__repeats[j]
+        return self
 
 
 def main():
