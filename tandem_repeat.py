@@ -4,9 +4,6 @@ from monomer import Monomer
 
 
 class Tandem_repeat:
-    mutationrate = 1
-    conversionrate = 1
-    slippagerate = 1
 
     def __init__(self, length, i=None, s=0.0):
         repeats = [Monomer(x) for x in range(length)]
