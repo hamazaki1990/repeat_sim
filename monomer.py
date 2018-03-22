@@ -1,4 +1,5 @@
 import random
+import copy
 
 
 class Monomer:
@@ -16,6 +17,9 @@ class Monomer:
 
     def get_genotype(self):
         return self.__genotype
+
+    def copy_self(self):
+        return copy.deepcopy(self)
 
     def acquire_mutation(self, s=0.0):
         self.__genotype.append(random.random())

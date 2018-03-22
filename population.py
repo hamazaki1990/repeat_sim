@@ -10,21 +10,19 @@ def roulettechoice(individuals, cumsum_fitness):
 
 
 class Population:
-    mutationrate = 1
-    conversionrate = 1
-    slippagerate = 1
 
-    def __init__(self, popsize, length, mutant=0.0, i=None, s=0.0):
-        num_mutant = int(popsize * mutant)
+    def __init__(self, populationsize, length, mutant=0.0, i=None, s=0.0):
+        num_mutant = int(populationsize * mutant)
         mutant_inds = [Tandem_repeat(length, i, s) for x in range(num_mutant)]
-        wild_inds = [Tandem_repeat(length) for x in range(num_mutant, popsize)]
+        wild_inds = [Tandem_repeat(length)
+                     for x in range(num_mutant, populationsize)]
         self._inds = mutant_inds + wild_inds
 
     def get_ids(self):
-        return self._inds
+        return [x.get_ids() for x in self._inds]
 
     def get_inds_fitnesses(self):
-        fitness = [x.cal_fitness() for x in self._inds]
+        fitness = [x.calculate_fitness() for x in self._inds]
         return fitness
 
     def get_monomer_fitnesses(self):
@@ -36,24 +34,26 @@ class Population:
         return genotypes
 
     def next_genwf(self):
-        fitness = [x.cal_fitness() for x in self._inds]
-        size = len(self._inds)
-        cumsum_fitness = [sum(fitness[:i]) for i in range(1, size + 1)]
+        fitness = [x.calculate_fitness() for x in self._inds]
+        popsize = len(self._inds)
+        cumsum_fitness = [sum(fitness[:i]) for i in range(1, popsize + 1)]
         next_generation = []
-        for x in range(size):
+        for x in range(popsize):
             parent_inds = roulettechoice(self._inds, cumsum_fitness)
-            next_inds = parent_inds.acquire_mutation()
+            next_inds = parent_inds.replicate_error()
             next_generation.append(next_inds)
         self._inds = next_generation
+        return self
 
     def next_genmo(self):
-        fitness = [x.get_fitness() for x in self._inds]
-        size = len(self._inds)
-        cumsum_fitness = [sum(fitness[:i]) for i in range(1, size + 1)]
-        i_dying = random.randrange(size)
+        fitness = [x.calculate_fitness() for x in self._inds]
+        popsize = len(self._inds)
+        cumsum_fitness = [sum(fitness[:i]) for i in range(1, popsize + 1)]
+        i_dying = random.randrange(popsize)
         parent_inds = roulettechoice(self._inds, cumsum_fitness)
-        next_inds = parent_inds.acquire_mutation()
+        next_inds = parent_inds.replicate_error()
         self._inds[i_dying] = next_inds
+        return self
 
     def list_mutation(self):
         genotypes = [x.get_genotype() for x in self._inds]
@@ -91,3 +91,21 @@ class Population:
                 return True
         else:
             return False
+
+
+def main():
+    test = Population(10, 5, 0.1, 2)
+    print(test.get_ids())
+    print(test.get_inds_genotypes())
+    print(test.get_inds_fitnesses())
+    test2 = test.next_genwf()
+    print(test2.get_ids())
+    print(test2.get_inds_genotypes())
+    print(test2.get_inds_fitnesses())
+    test2 = test.next_genmo()
+    print(test2.get_ids())
+    print(test2.get_inds_genotypes())
+    print(test2.get_inds_fitnesses())
+
+if __name__ == '__main__':
+    main()

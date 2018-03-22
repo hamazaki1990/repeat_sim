@@ -1,14 +1,16 @@
 import random
-import copy
 from monomer import Monomer
 
 
 class Tandem_repeat:
+    mutationrate = 0
+    sliprate = 0
+    conversrate = 0.1
 
     def __init__(self, length, i=None, s=0.0):
         repeats = [Monomer(x) for x in range(length)]
         if i is not None:
-            repeats[i] = Monomer(i, 1+s)
+            repeats[i].acquire_mutation(s)
         self.__repeats = repeats
 
     def get_ids(self):
@@ -30,34 +32,40 @@ class Tandem_repeat:
         f = [x.get_fitness() for x in self.__repeats]
         return sum(f)/l
 
-    def copy_self(self):
-        return copy.deepcopy(self)
-
     def acquire_mutation(self, s=0.0):  # add mutation that raises fitness by s
-        r = random.random()
-        if r < Tandem_repeat.mutationrate:
-            i = random.randrange(len(self.__repeats))
-            self.__repeats[i] = self.__repeats[i].acquire_mutation(s)
+        i = random.randrange(len(self.__repeats))
+        self.__repeats[i] = self.__repeats[i].copy_self().acquire_mutation(s)
         return self
 
     def slippage(self):
-        r = random.random()
-        if r < Tandem_repeat.slippagerate:
+        if 1 < self.get_length():
             i = random.randrange(self.get_length())
             self.__repeats.pop(i)
         return self
 
     def gene_conversion(self):
-        r = random.random()
-        if r < Tandem_repeat.conversionrate:
-            i = random.randrange(self.get_length())
-            j = random.randrange(self.get_length())
-            self.__repeats[i] = self.__repeats[j]
+        i = random.randrange(self.get_length())
+        j = random.randrange(self.get_length())
+        self.__repeats[i] = self.__repeats[j]
         return self
+
+    def replicate_error(self):
+        error = [Tandem_repeat.mutationrate, Tandem_repeat.sliprate,
+                 Tandem_repeat.conversrate]
+        errorrate = [sum(error[:i]) for i in range(1, len(error) + 1)]
+        r = random.random()
+        if r < errorrate[0]:
+            return self.acquire_mutation()
+        elif r < errorrate[1]:
+            return self.slippage()
+        elif r < errorrate[2]:
+            return self.gene_conversion()
+        else:
+            return self
 
 
 def main():
-    repeat = Tandem_repeat(5)
+    repeat = Tandem_repeat(5,1)
     print(repeat.get_ids())
     print(repeat.get_fitnesses())
     print(repeat.get_length())
@@ -88,6 +96,13 @@ def main():
     print(repeat6.get_fitnesses())
     print(repeat6.get_genotypes())
     print(repeat6.calculate_fitness())
+    repeat = Tandem_repeat(6)
+    print(repeat.get_ids())
+    print(repeat.get_genotypes())
+    for x in range(20):
+        repeat.replicate_error()
+        print(repeat.get_ids())
+        print(repeat.get_genotypes())
 
 
 if __name__ == '__main__':
