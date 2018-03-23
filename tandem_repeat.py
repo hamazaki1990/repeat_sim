@@ -7,13 +7,17 @@ class Tandem_repeat:
     sliprate = 0
     conversrate = 0.1
 
-    def __init__(self, length, i=None, s=0.0):
+    def __init__(self, repeat_id, length, mutatemonomer=None, s=0.0):
         repeats = [Monomer(x) for x in range(length)]
-        if i is not None:
-            repeats[i].acquire_mutation(s)
+        if mutatemonomer is not None:
+            repeats[mutatemonomer].acquire_mutation(s)
         self.__repeats = repeats
+        self.__repeat_id = repeat_id
 
-    def get_ids(self):
+    def get_repeat_id(self):
+        return self.__repeat_id
+
+    def get_monomer_ids(self):
         return [x.get_id() for x in self.__repeats]
 
     def get_length(self):

@@ -13,13 +13,13 @@ class Population:
 
     def __init__(self, populationsize, length, mutant=0.0, i=None, s=0.0):
         num_mutant = int(populationsize * mutant)
-        mutant_inds = [Tandem_repeat(length, i, s) for x in range(num_mutant)]
-        wild_inds = [Tandem_repeat(length)
-                     for x in range(num_mutant, populationsize)]
-        self._inds = mutant_inds + wild_inds
+        mutant = [Tandem_repeat(x, length, i, s) for x in range(num_mutant)]
+        wildtype = [Tandem_repeat(x, length)
+                    for x in range(num_mutant, populationsize)]
+        self._inds = mutant + wildtype
 
     def get_ids(self):
-        return [x.get_ids() for x in self._inds]
+        return [x.get_monomer_ids() for x in self._inds]
 
     def get_inds_fitnesses(self):
         fitness = [x.calculate_fitness() for x in self._inds]
@@ -97,15 +97,13 @@ def main():
     test = Population(10, 5, 0.1, 2)
     print(test.get_ids())
     print(test.get_inds_genotypes())
-    print(test.get_inds_fitnesses())
     test2 = test.next_genwf()
     print(test2.get_ids())
     print(test2.get_inds_genotypes())
-    print(test2.get_inds_fitnesses())
     test2 = test.next_genmo()
     print(test2.get_ids())
     print(test2.get_inds_genotypes())
-    print(test2.get_inds_fitnesses())
+
 
 if __name__ == '__main__':
     main()
