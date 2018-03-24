@@ -1,12 +1,23 @@
 from tandem_repeat import Tandem_repeat
+import random
+
+
+def roulettechoice(individuals, cumsum_fitness):
+    r = random.uniform(0.0, max(cumsum_fitness))
+    for i in range(len(cumsum_fitness)):
+        if r < cumsum_fitness[i]:
+            return individuals[i]
 
 
 class Population:
+    mutationrate = 1
+    conversionrate = 1
+    slippagerate = 1
 
-    def __init__(self, n, l, mutant=0.0, i=None, s=0.0):
-        num_mutant = int(n * mutant)
-        mutant_inds = [Tandem_repeat(l, i, s) for x in range(num_mutant)]
-        wild_inds = [Tandem_repeat(l) for x in range(num_mutant, n)]
+    def __init__(self, popsize, length, mutant=0.0, i=None, s=0.0):
+        num_mutant = int(popsize * mutant)
+        mutant_inds = [Tandem_repeat(length, i, s) for x in range(num_mutant)]
+        wild_inds = [Tandem_repeat(length) for x in range(num_mutant, popsize)]
         self._inds = mutant_inds + wild_inds
 
     def get_ids(self):

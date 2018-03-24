@@ -3,11 +3,12 @@ from monomer import Monomer
 
 class Tandem_repeat:
 
-    def __init__(self, l, i=None, s=0.0):
-        repeats = [Monomer(x) for x in range(l)]
-        if i is not None:
-            repeats[i] = Monomer(i, 1+s)
-        self._repeats = repeats
+    def __init__(self, repeat_id, length, mutatemonomer=None, s=0.0):
+        repeats = [Monomer(x) for x in range(length)]
+        if mutatemonomer is not None:
+            repeats[mutatemonomer].acquire_mutation(s)
+        self.__repeats = repeats
+        self.__repeat_id = repeat_id
 
     def get_repeat_ids(self):
         return self._repeats
@@ -31,37 +32,44 @@ class Tandem_repeat:
 
 
 def main():
-    repeat = Tandem_repeat(5)
+    repeat = Tandem_repeat(5,1)
     print(repeat.get_ids())
     print(repeat.get_fitnesses())
     print(repeat.get_length())
     print(repeat.get_genotypes())
-    print(repeat.cal_fitness())
+    print(repeat.calculate_fitness())
     repeat2 = repeat.acquire_mutation(0.1)
     print(repeat2.get_ids())
     print(repeat2.get_fitnesses())
     print(repeat2.get_genotypes())
-    print(repeat2.cal_fitness())
+    print(repeat2.calculate_fitness())
     repeat3 = repeat2.acquire_mutation(0.2)
     print(repeat3.get_ids())
     print(repeat3.get_fitnesses())
     print(repeat3.get_genotypes())
-    print(repeat3.cal_fitness())
+    print(repeat3.calculate_fitness())
     repeat4 = repeat3.slippage()
     print(repeat4.get_ids())
     print(repeat4.get_fitnesses())
     print(repeat4.get_genotypes())
-    print(repeat4.cal_fitness())
+    print(repeat4.calculate_fitness())
     repeat5 = repeat3.gene_conversion()
     print(repeat5.get_ids())
     print(repeat5.get_fitnesses())
     print(repeat5.get_genotypes())
-    print(repeat5.cal_fitness())
+    print(repeat5.calculate_fitness())
     repeat6 = repeat5.gene_conversion()
     print(repeat6.get_ids())
     print(repeat6.get_fitnesses())
     print(repeat6.get_genotypes())
-    print(repeat6.cal_fitness())
+    print(repeat6.calculate_fitness())
+    repeat = Tandem_repeat(6)
+    print(repeat.get_ids())
+    print(repeat.get_genotypes())
+    for x in range(20):
+        repeat.replicate_error()
+        print(repeat.get_ids())
+        print(repeat.get_genotypes())
 
 
 if __name__ == '__main__':
