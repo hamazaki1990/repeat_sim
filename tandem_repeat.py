@@ -50,11 +50,23 @@ class Tandem_repeat:
         self.__repeats[i] = self.__repeats[j]
         return self
 
-
+    def replicate_error(self):
+        error = [Tandem_repeat.mutationrate, Tandem_repeat.sliprate,
+                 Tandem_repeat.conversrate]
+        errorrate = [sum(error[:i]) for i in range(1, len(error) + 1)]
+        r = random.random()
+        if r < errorrate[0]:
+            return self.acquire_mutation()
+        elif r < errorrate[1]:
+            return self.slippage()
+        elif r < errorrate[2]:
+            return self.gene_conversion()
+        else:
+            return self
 
 
 def main():
-    repeat = Tandem_repeat(5, 1)
+    repeat = Tandem_repeat(5,1)
     print(repeat.get_ids())
     print(repeat.get_fitnesses())
     print(repeat.get_length())
@@ -92,7 +104,10 @@ def main():
         repeat.replicate_error()
         print(repeat.get_ids())
         print(repeat.get_genotypes())
+<<<<<<< HEAD
 
+=======
+>>>>>>> population
 
 
 if __name__ == '__main__':
