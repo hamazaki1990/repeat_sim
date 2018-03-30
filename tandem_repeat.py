@@ -44,14 +44,13 @@ class Tandem_repeat:
     def select_monomer(self, i):
         return self.__repeats[i]
 
-    def gene_conversion(self):
-        i = random.randrange(self.get_length())
-        j = random.randrange(self.get_length())
-        self.__repeats[i] = self.select_monomer(j)
+    def gene_conversion(self, i, monomer):
+        self.__repeats[i] = monomer
         return self
 
+
 def main():
-    repeat = Tandem_repeat(5,1)
+    repeat = Tandem_repeat(1, 5, 1)
     print(repeat.get_ids())
     print(repeat.get_fitnesses())
     print(repeat.get_length())
@@ -72,21 +71,12 @@ def main():
     print(repeat4.get_fitnesses())
     print(repeat4.get_genotypes())
     print(repeat4.calculate_fitness())
-    repeat5 = repeat3.gene_conversion()
-    print(repeat5.get_ids())
-    print(repeat5.get_fitnesses())
-    print(repeat5.get_genotypes())
-    print(repeat5.calculate_fitness())
-    repeat6 = repeat5.gene_conversion()
-    print(repeat6.get_ids())
-    print(repeat6.get_fitnesses())
-    print(repeat6.get_genotypes())
-    print(repeat6.calculate_fitness())
-    repeat = Tandem_repeat(6, 0)
+    repeat = Tandem_repeat(1, 6, 0)
     print(repeat.get_ids())
     print(repeat.get_genotypes())
     for x in range(20):
-        repeat.gene_conversion()
+        repeat.gene_conversion(random.randrange(6),
+                               repeat.select_monomer(random.randrange(6)))
         print(repeat.get_ids())
         print(repeat.get_genotypes())
 

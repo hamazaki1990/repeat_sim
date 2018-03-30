@@ -62,13 +62,10 @@ class Diploid:
         return next_repeats
 
     def gene_conversion(self):
-        r = random.random()
-        next_repeats = copy.deepcopy(self)
-        if r < Tandem_repeat.conversionrate:
-            i = random.randrange(len(next_repeats._repeats))
-            j = random.randrange(len(next_repeats._repeats))
-            next_repeats._repeats[i] = next_repeats._repeats[j]
-        return next_repeats
+        i = random.randrange(self.get_length())
+        j = random.randrange(self.get_length())
+        self.__repeats[i] = self.select_monomer(j)
+        return self
 
     def crossing_over(self):
         r = random.random()
