@@ -9,12 +9,9 @@ class Tandem_repeat:
         if mutatemonomer is not None:
             repeats[mutatemonomer].acquire_mutation(s)
         self.__repeats = repeats
-        self.__repeat_id = repeat_id
+        self.__id = repeat_id
 
-    def get_repeat_id(self):
-        return self.__repeat_id
-
-    def get_monomer_ids(self):
+    def get_ids(self):
         return [x.get_id() for x in self.__repeats]
 
     def get_length(self):
@@ -44,27 +41,14 @@ class Tandem_repeat:
             self.__repeats.pop(i)
         return self
 
+    def select_monomer(self, i):
+        return self.__repeats[i]
+
     def gene_conversion(self):
         i = random.randrange(self.get_length())
         j = random.randrange(self.get_length())
-        self.__repeats[i] = self.__repeats[j]
+        self.__repeats[i] = self.select_monomer(j)
         return self
-
-    def replicate_error(self):
-        error = [Tandem_repeat.mutationrate, Tandem_repeat.sliprate,
-                 Tandem_repeat.conversrate]
-        errorrate = [sum(error[:i]) for i in range(1, len(error) + 1)]
-        r = random.random()
-        if r < errorrate[0]:
-            return self.acquire_mutation()
-        elif r < errorrate[1]:
-            return self.slippage()
-        elif r < errorrate[2]:
-            return self.gene_conversion()
-        else:
-            return self
-
-
 
 def main():
     repeat = Tandem_repeat(5,1)
@@ -98,17 +82,13 @@ def main():
     print(repeat6.get_fitnesses())
     print(repeat6.get_genotypes())
     print(repeat6.calculate_fitness())
-    repeat = Tandem_repeat(6)
+    repeat = Tandem_repeat(6, 0)
     print(repeat.get_ids())
     print(repeat.get_genotypes())
     for x in range(20):
-        repeat.replicate_error()
+        repeat.gene_conversion()
         print(repeat.get_ids())
         print(repeat.get_genotypes())
-<<<<<<< HEAD
-
-=======
->>>>>>> population
 
 
 if __name__ == '__main__':

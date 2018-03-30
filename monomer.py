@@ -5,29 +5,29 @@ import copy
 class Monomer:
 
     def __init__(self, id_number, fitness=1.0):
-        self.__id = id_number
-        self.__fitness = fitness
-        self.__genotype = []
+        self.__monomer_id = id_number
+        self.__monomer_fitness = fitness
+        self.__monomer_genotype = []
 
     def get_id(self):
-        return self.__id
+        return self.__monomer_id
 
     def get_fitness(self):
-        return self.__fitness
+        return self.__monomer_fitness
 
     def get_genotype(self):
-        return self.__genotype
+        return self.__monomer_genotype
 
     def copy_self(self):
         return copy.deepcopy(self)
 
     def acquire_mutation(self, s=0.0):
-        self.__genotype.append(random.random())
-        self.__fitness += s
+        self.__monomer_genotype.append(random.random())
+        self.__monomer_fitness += s
         return self
 
     def __repr__(self):
-        return "Monomer(id:{})".format(self.__id)
+        return "Monomer(id:{})".format(self.__monomer_id)
 
 
 def main():
