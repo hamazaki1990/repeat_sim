@@ -16,7 +16,7 @@ class Diploid:
     def get_ind_id(self):
         return self._paternal.get_repeat_id()
 
-    def get_ind_monomerids(self):
+    def get_ind_repeatids(self):
         ids = [self._paternal.get_monomer_ids(),
                self._maternal.get_monomer_ids()]
         return ids
@@ -37,47 +37,46 @@ class Diploid:
         return genotype
 
     def calculate_ind_fitnesses(self):
-        dom = max(self._paternal.cal_repeat_fitness(),
-                  self._maternal.cal_repeat_fitness())
-        res = min(self._paternal.cal_repeat_fitness(),
-                  self._maternal.cal_repeat_fitness())
+
         return sum(f)/l
 
     def acquire_mutation(self, s=0.0):  # add mutation that raises fitness by s
         r = random.random()
         next_repeats = copy.deepcopy(self)
         if r < 0.5:
-            next_repeats._paternal.acquire_mutation()
-        else:
-            next_repeats._maternal.acquire_mutation()
+            i = random.randrange(len(next_repeats._repeats))
+            next_monomer = next_repeats._repeats[i]
+            next_monomer._fitness += s
+            next_monomer._genotype.append(random.random())
+            next_repeats._repeats[i] = next_monomer
         return next_repeats
 
     def slippage(self):
         r = random.random()
         next_repeats = copy.deepcopy(self)
-        if r < 0.5:
-            next_repeats._paternal.slippage()
-        else:
-            next_repeats._maternal.slippage()
+        if r < Tandem_repeat.slippagerate:
+            i = random.randrange(len(next_repeats._repeats))
+            next_repeats._repeats.pop(i)
         return next_repeats
 
     def gene_conversion(self):
-        i = random.randrange(self.get_length())
-        j = random.randrange(self.get_length())
-        self.__repeats[i] = self.select_monomer(j)
-        return self
+        r = random.random()
+        next_repeats = copy.deepcopy(self)
+        if r < Tandem_repeat.conversionrate:
+            i = random.randrange(len(next_repeats._repeats))
+            j = random.randrange(len(next_repeats._repeats))
+            next_repeats._repeats[i] = next_repeats._repeats[j]
+        return next_repeats
 
     def crossing_over(self):
         r = random.random()
         next_repeats = copy.deepcopy(self)
-        if r < Tandem_repeat.crossingraterate:
-
-
+        
 
 
     def replicate_error(self):
         error = [Tandem_repeat.mutationrate, Tandem_repeat.sliprate,
-                 Tandem_repeat.conversrate, Tandem_repeat.crossingrate]
+                 Tandem_repeat.conversrate, crossingrate]
         errorrate = [sum(error[:i]) for i in range(1, len(error) + 1)]
         r = random.random()
         if r < errorrate[0]:
