@@ -3,80 +3,113 @@ import random
 import copy
 
 
+def calculate_ave(seq):
+    return sum(seq)/len(seq)
+
+
+def calculate_var(seq):
+    ave = calculate_ave(seq)
+    sqd = [(seq[x] - ave)**2 for x in range(len(seq))]
+    return sum(sqd)/len(seq)
+
+
 class Diploid:
-    mutationrate = 0.25
-    sliprate = 0.25
-    conversrate = 0.25
-    crossingrate = 0.25
+    mutationrate = 0
+    sliprate = 0
+    conversrate = 0.5
+    crossingrate = 0.5
 
-    def __init__(self, ind_id, len1, len2, i=None, s=0.0):
-        self._paternal = Tandem_repeat(ind_id, len1, i, s)
-        self._maternal = Tandem_repeat(ind_id, len2)
+    def __init__(self, len1, len2, i=None, s=0.0):
+        self._paternal = Tandem_repeat(len1, i, s)
+        self._maternal = Tandem_repeat(len2)
 
-    def get_ind_id(self):
-        return self._paternal.get_repeat_id()
+#    def get_ind_id(self):
+#        return self._paternal.get_repeat_id()
 
     def get_ind_repeatids(self):
-        ids = [self._paternal.get_monomer_ids(),
-               self._maternal.get_monomer_ids()]
+        ids = [self._paternal.get_ids(),
+               self._maternal.get_ids()]
         return ids
 
     def get_ind_repeatlengths(self):
-        length = [self._paternal.get_repeat_length(),
-                  self._maternal.get_repeat_length()]
+        length = [self._paternal.get_length(),
+                  self._maternal.get_length()]
         return length
 
     def get_ind_fitnesses(self):
-        fitnesses = [self._paternal.get_repeat_fitnesses(),
-                     self._maternal.get_repeat_fitnesses()]
+        fitnesses = [self._paternal.get_fitnesses(),
+                     self._maternal.get_fitnesses()]
         return fitnesses
 
     def get_ind_genotypes(self):
-        genotype = [self._paternal.get_repeat_genotypes(),
-                    self._maternal.get_repeat_genotypes()]
+        genotype = [self._paternal.get_genotypes(),
+                    self._maternal.get_genotypes()]
         return genotype
 
     def calculate_ind_fitnesses(self):
+        pa_fitness = self._paternal.calculate_fitnes()
+        ma_fitness = self._maternal.calculate_fitnes()
+        return calculate_ave([pa_fitness, ma_fitness])
 
-        return sum(f)/l
+    def copy_self(self):
+        return copy.deepcopy(self)
 
     def acquire_mutation(self, s=0.0):  # add mutation that raises fitness by s
         r = random.random()
-        next_repeats = copy.deepcopy(self)
+        c_self = self.copy_self()
         if r < 0.5:
-            i = random.randrange(len(next_repeats._repeats))
-            next_monomer = next_repeats._repeats[i]
-            next_monomer._fitness += s
-            next_monomer._genotype.append(random.random())
-            next_repeats._repeats[i] = next_monomer
-        return next_repeats
+            c_self._paternal.acquire_mutation()
+        else:
+            c_self._maternal.acquire_mutation()
+        return c_self
 
     def slippage(self):
         r = random.random()
-        next_repeats = copy.deepcopy(self)
-        if r < Tandem_repeat.slippagerate:
-            i = random.randrange(len(next_repeats._repeats))
-            next_repeats._repeats.pop(i)
-        return next_repeats
+        c_self = self.copy_self()
+        if r < 0.5:
+            c_self._paternal.slippage()
+        else:
+            c_self._maternal.slippage()
+        return c_self
 
-    def gene_conversion(self):
+    def conversion(self):
         r = random.random()
-        next_repeats = copy.deepcopy(self)
-        if r < Tandem_repeat.conversionrate:
-            i = random.randrange(len(next_repeats._repeats))
-            j = random.randrange(len(next_repeats._repeats))
-            next_repeats._repeats[i] = next_repeats._repeats[j]
-        return next_repeats
+        lp = self._paternal.get_length()
+        lm = self._maternal.get_length()
+        c_self = self.copy_self()
+        if r < 0.25:
+            i = random.randrange(lp)
+            j = random.randrange(lp)
+            c_self._paternal.conversion(i, c_self._paternal.select_partial(j))
+        elif r < 0.5:
+            i = random.randrange(lp)
+            j = random.randrange(lm)
+            c_self._paternal.conversion(i, c_self._maternal.select_partial(j))
+        elif r < 0.5:
+            i = random.randrange(lm)
+            j = random.randrange(lp)
+            c_self._maternal.conversion(i, c_self._paternal.select_partial(j))
+        elif r < 0.75:
+            i = random.randrange(lm)
+            j = random.randrange(lm)
+            c_self._maternal.conversion(i, c_self._maternal.select_partial(j))
+        return c_self
 
     def crossing_over(self):
-        r = random.random()
-        next_repeats = copy.deepcopy(self)
-        
-
+        lp = self._paternal.get_length()
+        lm = self._maternal.get_length()
+        i = random.randrange(lp)
+        j = random.randrange(lm)
+        c_self = self.copy_self()
+        p_latter = c_self._paternal.select_partial(i, lp)
+        m_latter = c_self._maternal.select_partial(j, lm)
+        c_self._paternal.crossing_over(i, m_latter)
+        c_self._maternal.crossing_over(j, p_latter)
+        return c_self
 
     def replicate_error(self):
-        error = [Tandem_repeat.mutationrate, Tandem_repeat.sliprate,
-                 Tandem_repeat.conversrate, crossingrate]
+        error = [Diploid.mutationrate, Diploid.sliprate,
+                 Diploid.conversrate, Diploid.crossingrate]
         errorrate = [sum(error[:i]) for i in range(1, len(error) + 1)]
         r = random.random()
         if r < errorrate[0]:
@@ -84,18 +117,41 @@ class Diploid:
         elif r < errorrate[1]:
             return self.slippage()
         elif r < errorrate[2]:
-            return self.gene_conversion()
+            return self.conversion()
         elif r < errorrate[3]:
             return self.crossing_over()
         else:
             return self
 
 
-test = Diploid(3)
-print(test.get_ids())
-print(test.get_fitnesses())
+def main():
+    test = Diploid(3, 3, 2)
+    print(test.get_ind_repeatids())
+    print(test.get_ind_genotypes())
+
+    test2 = test.acquire_mutation()
+    print(test2.get_ind_repeatids())
+    print(test2.get_ind_genotypes())
+
+    test2 = test.slippage()
+    print(test2.get_ind_repeatids())
+    print(test2.get_ind_genotypes())
+
+    test2 = test.conversion()
+    print(test2.get_ind_repeatids())
+    print(test2.get_ind_genotypes())
+
+    test2 = test.crossing_over()
+    print(test2.get_ind_repeatids())
+    print(test2.get_ind_genotypes())
+
+    print("100generation")
+    test = Diploid(4, 6)
+    for i in range(100):
+        print(test.get_ind_repeatids())
+        print(test.get_ind_genotypes())
+        test = test.replicate_error()
 
 
-test2 = test.copy_paternal()
-print(test2.get_ids())
-print(test2.get_fitnesses())
+if __name__ == '__main__':
+    main()
