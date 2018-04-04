@@ -1,4 +1,4 @@
-from tandem_repeat import Tandem_repeat
+from diploid import Diploid
 import random
 
 
@@ -10,21 +10,19 @@ def roulettechoice(individuals, cumsum_fitness):
 
 
 class Population:
-    mutationrate = 1
-    conversionrate = 1
-    slippagerate = 1
 
-    def __init__(self, popsize, length, mutant=0.0, i=None, s=0.0):
-        num_mutant = int(popsize * mutant)
-        mutant_inds = [Tandem_repeat(length, i, s) for x in range(num_mutant)]
-        wild_inds = [Tandem_repeat(length) for x in range(num_mutant, popsize)]
+    def __init__(self, popsize, replength, mut_allelerate=0.0, i=None, s=0.0):
+        wild_allelerate = 1 - mut_allelerate
+        num_mutant = int(popsize * mutantrate)
+        mutant_inds = [Diploid(repeat_len, i, s) for x in range(num_mutant)]
+        wild_inds = [Diploid(repeat_len) for x in range(num_mutant, popsize)]
         self._inds = mutant_inds + wild_inds
 
     def get_ids(self):
-        return self._inds
+        return [x.get_ind_repeatids() for x in self._inds]
 
     def get_inds_fitnesses(self):
-        fitness = [x.cal_fitness() for x in self._inds]
+        fitness = [x.calculate_ind_fitness() for x in self._inds]
         return fitness
 
     def get_monomer_fitnesses(self):
@@ -36,7 +34,7 @@ class Population:
         return genotypes
 
     def next_genwf(self):
-        fitness = [x.cal_fitness() for x in self._inds]
+        fitness = [x.calculate_ind_fitness() for x in self._inds]
         size = len(self._inds)
         cumsum_fitness = [sum(fitness[:i]) for i in range(1, size + 1)]
         next_generation = []

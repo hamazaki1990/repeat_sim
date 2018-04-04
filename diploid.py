@@ -19,9 +19,13 @@ class Diploid:
     conversrate = 0.5
     crossingrate = 0.5
 
-    def __init__(self, len1, len2, i=None, s=0.0):
-        self._paternal = Tandem_repeat(len1, i, s)
-        self._maternal = Tandem_repeat(len2)
+    def __init__(self, repeat1, repeat2=None):
+        if repeat2 is None:
+            self._paternal = repeat1
+            self._maternal = copy.deepcopy(repeat1)
+        else:
+            self._paternal = repeat1
+            self._maternal = repeat2
 
 #    def get_ind_id(self):
 #        return self._paternal.get_repeat_id()
@@ -46,9 +50,9 @@ class Diploid:
                     self._maternal.get_genotypes()]
         return genotype
 
-    def calculate_ind_fitnesses(self):
-        pa_fitness = self._paternal.calculate_fitnes()
-        ma_fitness = self._maternal.calculate_fitnes()
+    def calculate_ind_fitness(self):
+        pa_fitness = self._paternal.calculate_fitness()
+        ma_fitness = self._maternal.calculate_fitness()
         return calculate_ave([pa_fitness, ma_fitness])
 
     def copy_self(self):
@@ -125,13 +129,15 @@ class Diploid:
 
 
 def main():
-    test = Diploid(3, 3, 2)
+    test = Diploid(Tandem_repeat(3, 2), Tandem_repeat(3, 2))
     print(test.get_ind_repeatids())
     print(test.get_ind_genotypes())
+    print(test.calculate_ind_fitness())
 
     test2 = test.acquire_mutation()
     print(test2.get_ind_repeatids())
     print(test2.get_ind_genotypes())
+    print(test2.calculate_ind_fitness())
 
     test2 = test.slippage()
     print(test2.get_ind_repeatids())
@@ -145,9 +151,9 @@ def main():
     print(test2.get_ind_repeatids())
     print(test2.get_ind_genotypes())
 
-    print("100generation")
-    test = Diploid(4, 6)
-    for i in range(100):
+    print("20generation")
+    test = Diploid(Tandem_repeat(6), Tandem_repeat(6, 3))
+    for i in range(20):
         print(test.get_ind_repeatids())
         print(test.get_ind_genotypes())
         test = test.replicate_error()
