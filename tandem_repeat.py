@@ -4,15 +4,18 @@ from monomer import Monomer
 
 class Tandem_repeat:
 
-    def __init__(self, length, mutatemonomer=None, s=0.0):
+    def __init__(self, repeat_id, length, mutatemonomer=None, s=0.0):
         repeats = [Monomer(x) for x in range(length)]
         if mutatemonomer is not None:
             repeats[mutatemonomer].acquire_mutation(s)
         self.__repeats = repeats
-#        self.__id = repeat_id
+        self.__id = repeat_id
 
     def get_ids(self):
         return [x.get_id() for x in self.__repeats]
+
+    def get_repeatid(self):
+        return self.__id
 
     def get_length(self):
         return len(self.__repeats)

@@ -14,10 +14,10 @@ def calculate_var(seq):
 
 
 class Diploid:
-    mutationrate = 0
-    sliprate = 0
-    conversrate = 0.5
-    crossingrate = 0.5
+    mutationrate = 0.1
+    sliprate = 0.2
+    conversrate = 0.3
+    crossingrate = 0.4
 
     def __init__(self, repeat1, repeat2=None):
         if repeat2 is None:
@@ -27,10 +27,10 @@ class Diploid:
             self._paternal = repeat1
             self._maternal = repeat2
 
-#    def get_ind_id(self):
-#        return self._paternal.get_repeat_id()
+    def get_ind_id(self):
+        return self._paternal.get_repeatid()
 
-    def get_ind_repeatids(self):
+    def get_repeatids(self):
         ids = [self._paternal.get_ids(),
                self._maternal.get_ids()]
         return ids
@@ -127,9 +127,16 @@ class Diploid:
         else:
             return self
 
+    def make_zygote(self):
+        r = random.random()
+        if r < 0.5:
+            return self._paternal
+        else:
+            return self._maternal
+
 
 def main():
-    test = Diploid(Tandem_repeat(3, 2), Tandem_repeat(3, 2))
+    test = Diploid(Tandem_repeat(1, 3, 2), Tandem_repeat(1, 3, 2))
     print(test.get_ind_repeatids())
     print(test.get_ind_genotypes())
     print(test.calculate_ind_fitness())
@@ -152,7 +159,7 @@ def main():
     print(test2.get_ind_genotypes())
 
     print("20generation")
-    test = Diploid(Tandem_repeat(6), Tandem_repeat(6, 3))
+    test = Diploid(Tandem_repeat(1, 6), Tandem_repeat(1, 6, 3))
     for i in range(20):
         print(test.get_ind_repeatids())
         print(test.get_ind_genotypes())

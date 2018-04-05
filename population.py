@@ -1,5 +1,7 @@
 from diploid import Diploid
+from tandem_repeat import Tandem_repeat
 import random
+import copy
 
 
 def roulettechoice(individuals, cumsum_fitness):
@@ -12,16 +14,27 @@ def roulettechoice(individuals, cumsum_fitness):
 class Population:
 
     def __init__(self, popsize, replength, mut_allelerate=0.0, i=None, s=0.0):
-        wild_allelerate = 1 - mut_allelerate
+        mutantrate = mut_allelerate ** 2
+        heterorate = 2 * mut_allelerate * (1 - mut_allelerate)
         num_mutant = int(popsize * mutantrate)
-        mutant_inds = [Diploid(repeat_len, i, s) for x in range(num_mutant)]
-        wild_inds = [Diploid(repeat_len) for x in range(num_mutant, popsize)]
-        self._inds = mutant_inds + wild_inds
+        num_hetero = int(popsize * heterorate)
+        num_notwild = num_mutant + num_hetero
+        mutant_inds = [Diploid(Tandem_repeat(x, replength, i, s))
+                       for x in range(num_mutant)]
+        het_inds = [Diploid(Tandem_repeat(x, replength),
+                    Tandem_repeat(x, replength, i, s))
+                    for x in range(num_mutant, num_notwild)]
+        wild_inds = [Diploid(Tandem_repeat(x, replength))
+                     for x in range(num_notwild, popsize)]
+        self._inds = mutant_inds + het_inds + wild_inds
 
-    def get_ids(self):
-        return [x.get_ind_repeatids() for x in self._inds]
+    def get_repeat_ids(self):
+        return [x.get_repeatids() for x in self._inds]
 
-    def get_inds_fitnesses(self):
+    def get_ind_ids(self):
+        return [x.get_ind_id() for x in self._inds]
+
+    def get_ind_fitnesses(self):
         fitness = [x.calculate_ind_fitness() for x in self._inds]
         return fitness
 
@@ -29,19 +42,28 @@ class Population:
         fitness = [x.get_fitnesses() for x in self._inds]
         return fitness
 
-    def get_inds_genotypes(self):
-        genotypes = [x.get_genotypes() for x in self._inds]
+    def get_ind_genotypes(self):
+        genotypes = [x.get_ind_genotypes() for x in self._inds]
         return genotypes
 
-    def next_genwf(self):
+    def calc_cumsum_fitness(self):
         fitness = [x.calculate_ind_fitness() for x in self._inds]
         size = len(self._inds)
         cumsum_fitness = [sum(fitness[:i]) for i in range(1, size + 1)]
+        return cumsum_fitness
+
+    def next_genwf(self):
         next_generation = []
+        size = len(self._inds)
         for x in range(size):
-            parent_inds = roulettechoice(self._inds, cumsum_fitness)
-            next_inds = parent_inds.acquire_mutation()
-            next_generation.append(next_inds)
+            cf1 = self.calc_cumsum_fitness()
+            father = roulettechoice(self._inds, cf1)
+            next_p = father.replicate_error().make_zygote()
+            inds2 = copy.copy(self._inds).remove(father)
+            cf2 = inds2.calc_cumsum_fitness()
+            mother = roulettechoice(inds2, cf2)
+            next_m = mother.replicate_error().make_zygote()
+            next_generation.append(Diploid(next_p, next_m))
         self._inds = next_generation
 
     def next_genmo(self):
@@ -89,3 +111,10 @@ class Population:
                 return True
         else:
             return False
+
+
+test = Population(10, 5, 0.1, 0)
+print(test.get_ind_ids())
+print(test.get_repeat_ids())
+print(test.get_ind_genotypes())
+test2 = test.next_genwf()
