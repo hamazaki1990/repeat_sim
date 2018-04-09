@@ -56,24 +56,25 @@ class Population:
         next_generation = []
         size = len(self._inds)
         for x in range(size):
-            cf1 = self.calc_cumsum_fitness()
-            father = roulettechoice(self._inds, cf1)
+            cf = self.calc_cumsum_fitness()
+            father = roulettechoice(self._inds, cf)
             next_p = father.replicate_error().make_zygote()
-            inds2 = copy.copy(self._inds).remove(father)
-            cf2 = inds2.calc_cumsum_fitness()
-            mother = roulettechoice(inds2, cf2)
+            mother = roulettechoice(self._inds, cf)
             next_m = mother.replicate_error().make_zygote()
             next_generation.append(Diploid(next_p, next_m))
         self._inds = next_generation
+        return self
 
     def next_genmo(self):
-        fitness = [x.get_fitness() for x in self._inds]
         size = len(self._inds)
-        cumsum_fitness = [sum(fitness[:i]) for i in range(1, size + 1)]
         i_dying = random.randrange(size)
-        parent_inds = roulettechoice(self._inds, cumsum_fitness)
-        next_inds = parent_inds.acquire_mutation()
-        self._inds[i_dying] = next_inds
+        cf = self.calc_cumsum_fitness()
+        father = roulettechoice(self._inds, cf)
+        next_p = father.replicate_error().make_zygote()
+        mother = roulettechoice(self._inds, cf)
+        next_m = mother.replicate_error().make_zygote()
+        self._inds[i_dying] = Diploid(next_p, next_m)
+        return self
 
     def list_mutation(self):
         genotypes = [x.get_genotype() for x in self._inds]
@@ -113,8 +114,21 @@ class Population:
             return False
 
 
+print("wf")
 test = Population(10, 5, 0.1, 0)
 print(test.get_ind_ids())
 print(test.get_repeat_ids())
 print(test.get_ind_genotypes())
 test2 = test.next_genwf()
+print(test2.get_ind_ids())
+print(test2.get_repeat_ids())
+print(test2.get_ind_genotypes())
+print("moran")
+test = Population(10, 5, 0.1, 0)
+print(test.get_ind_ids())
+print(test.get_repeat_ids())
+print(test.get_ind_genotypes())
+test3 = test.next_genmo()
+print(test3.get_ind_ids())
+print(test3.get_repeat_ids())
+print(test3.get_ind_genotypes())

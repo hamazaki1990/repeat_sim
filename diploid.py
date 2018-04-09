@@ -14,9 +14,9 @@ def calculate_var(seq):
 
 
 class Diploid:
-    mutationrate = 0.1
+    mutationrate = 0
     sliprate = 0.2
-    conversrate = 0.3
+    conversrate = 0.4
     crossingrate = 0.4
 
     def __init__(self, repeat1, repeat2=None):
@@ -28,7 +28,7 @@ class Diploid:
             self._maternal = repeat2
 
     def get_ind_id(self):
-        return self._paternal.get_repeatid()
+        return [self._paternal.get_repeatid(), self._maternal.get_repeatid()]
 
     def get_repeatids(self):
         ids = [self._paternal.get_ids(),
