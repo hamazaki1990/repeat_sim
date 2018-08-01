@@ -137,31 +137,31 @@ class Diploid:
 
 def main():
     test = Diploid(Tandem_repeat(1, 3, 2), Tandem_repeat(1, 3, 2))
-    print(test.get_ind_repeatids())
+    print(test.get_repeatids())
     print(test.get_ind_genotypes())
     print(test.calculate_ind_fitness())
 
     test2 = test.acquire_mutation()
-    print(test2.get_ind_repeatids())
+    print(test2.get_repeatids())
     print(test2.get_ind_genotypes())
     print(test2.calculate_ind_fitness())
 
     test2 = test.slippage()
-    print(test2.get_ind_repeatids())
+    print(test2.get_repeatids())
     print(test2.get_ind_genotypes())
 
     test2 = test.conversion()
-    print(test2.get_ind_repeatids())
+    print(test2.get_repeatids())
     print(test2.get_ind_genotypes())
 
     test2 = test.crossing_over()
-    print(test2.get_ind_repeatids())
+    print(test2.get_repeatids())
     print(test2.get_ind_genotypes())
 
     print("20generation")
     test = Diploid(Tandem_repeat(1, 6), Tandem_repeat(1, 6, 3))
     for i in range(20):
-        print(test.get_ind_repeatids())
+        print(test.get_repeatids())
         print(test.get_ind_genotypes())
         test = test.replicate_error()
 
