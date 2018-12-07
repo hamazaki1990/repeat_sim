@@ -28,6 +28,11 @@ class Monomer:
 
 def main():
     test = Monomer(1)
+    test1 = Monomer(1)
+    print(str(test.get_id() == test1.get_id()))
+    print(str(test.get_fitness() == test1.get_fitness()))
+    print(str(test.get_genotype() == test1.get_genotype()))
+    print(str(test == test1))
     print(test.get_fitness())
     test2 = test.acquire_mutation()
     print(test2.get_id())

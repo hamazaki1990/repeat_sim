@@ -1,7 +1,7 @@
 from diploid import Diploid
 from tandem_repeat import Tandem_repeat
 import random
-import copy
+import pprint
 
 
 def roulettechoice(individuals, cumsum_fitness):
@@ -106,36 +106,62 @@ class Population:
                                for i in range(len(m_sites))])
         return mutantfreq_per_site
 
-    def is_not_fixed(self):
+    def is_not_fixed_ind(self):
         for x in range(1, len(self._inds)):
-            if self._inds[0] != self._inds[x]:
+            if self.get_ind_ids()[0] != self.get_ind_ids()[x]:
+                return True
+        else:
+            return False
+
+    def is_not_fixed_rep(self):
+        for x in range(1, len(self._inds)):
+            if self.get_repeat_ids()[0] != self.get_repeat_ids()[x]:
                 return True
         else:
             return False
 
 
-print("wf")
+pprint.pprint("wf")
 test = Population(10, 3, 0.1, 0)
-print(test.get_ind_ids())
-print(test.get_repeat_ids())
-print(test.get_ind_genotypes())
+pprint.pprint(test.get_ind_ids())
+pprint.pprint(test.get_repeat_ids())
+pprint.pprint(test.get_ind_genotypes())
 test2 = test.next_genwf()
-print(test2.get_ind_ids())
-print(test2.get_repeat_ids())
-print(test2.get_ind_genotypes())
-print(test2.is_not_fixed())
+pprint.pprint(test2.get_ind_ids())
+pprint.pprint(test2.get_repeat_ids())
+pprint.pprint(test2.get_ind_genotypes())
+pprint.pprint(test2.is_not_fixed_ind())
 test3 = test2.next_genwf()
-print(test3.get_ind_ids())
-print(test3.get_repeat_ids())
-print(test3.get_ind_genotypes())
-print(test3.is_not_fixed())
-print("mo")
+pprint.pprint(test3.get_ind_ids())
+pprint.pprint(test3.get_repeat_ids())
+pprint.pprint(test3.get_ind_genotypes())
+pprint.pprint(test3.is_not_fixed_ind())
+pprint.pprint("mo")
 test = Population(10, 3, 0.1, 0)
-print(test.get_ind_ids())
-print(test.get_repeat_ids())
-print(test.get_ind_genotypes())
+pprint.pprint(test.get_ind_ids())
+pprint.pprint(test.get_repeat_ids())
+pprint.pprint(test.get_ind_genotypes())
 test3 = test.next_genmo()
-print(test3.get_ind_ids())
-print(test3.get_repeat_ids())
-print(test3.get_ind_genotypes())
-print(test2.is_not_fixed())
+pprint.pprint(test3.get_ind_ids())
+pprint.pprint(test3.get_repeat_ids())
+pprint.pprint(test3.get_ind_genotypes())
+pprint.pprint(test2.is_not_fixed_ind())
+pprint.pprint("fix_wf")
+test = Population(10, 3)
+while (test.is_not_fixed_ind() or test.is_not_fixed_rep()):
+    pprint.pprint(test.get_ind_ids())
+    pprint.pprint(test.get_repeat_ids())
+    pprint.pprint(test.get_ind_genotypes())
+    test = test.next_genwf()
+    print("ind_id")
+    for x in range(10):
+        print(test.get_ind_ids()[0] != test.get_ind_ids()[x])
+    print("repeat_id")
+    for x in range(10):
+        print(test.get_repeat_ids()[0] != test.get_repeat_ids()[x])
+    print("fix_ind:" + str(test.is_not_fixed_ind()))
+    print("fix_repeat:" + str(test.is_not_fixed_rep()))
+
+pprint.pprint(test.get_ind_ids())
+pprint.pprint(test.get_repeat_ids())
+# pprint.pprint(test.get_ind_genotypes())

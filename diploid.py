@@ -15,9 +15,9 @@ def calculate_var(seq):
 
 class Diploid:
     mutationrate = 0
-    sliprate = 0.2
-    conversrate = 0.4
-    crossingrate = 0.4
+    sliprate = 0
+    conversrate = 1
+    crossingrate = 0
 
     def __init__(self, repeat1, repeat2=None):
         if repeat2 is None:
@@ -137,6 +137,8 @@ class Diploid:
 
 def main():
     test = Diploid(Tandem_repeat(1, 3, 2), Tandem_repeat(1, 3, 2))
+    test1 = Diploid(Tandem_repeat(1, 3, 2), Tandem_repeat(1, 3, 2))
+    print(str(test[0] == test1[0]))
     print(test.get_repeatids())
     print(test.get_ind_genotypes())
     print(test.calculate_ind_fitness())
