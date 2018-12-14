@@ -16,8 +16,8 @@ def calculate_var(seq):
 class Diploid:
     mutationrate = 0
     sliprate = 0
-    conversrate = 1
-    crossingrate = 0
+    conversrate = 0
+    crossingrate = 1
 
     def __init__(self, repeat1, repeat2=None):
         if repeat2 is None:
@@ -35,30 +35,30 @@ class Diploid:
                self._maternal.get_ids()]
         return ids
 
-    def get_ind_repeatlengths(self):
+    def get_ind_repeatlength(self):
         length = [self._paternal.get_length(),
                   self._maternal.get_length()]
         return length
 
-    def get_ind_fitnesses(self):
-        fitnesses = [self._paternal.get_fitnesses(),
-                     self._maternal.get_fitnesses()]
-        return fitnesses
+    def get_ind_scs(self):
+        scs = [self._paternal.get_scs(),
+                     self._maternal.get_scs()]
+        return scs
 
     def get_ind_genotypes(self):
         genotype = [self._paternal.get_genotypes(),
                     self._maternal.get_genotypes()]
         return genotype
 
-    def calculate_ind_fitness(self):
-        pa_fitness = self._paternal.calculate_fitness()
-        ma_fitness = self._maternal.calculate_fitness()
-        return calculate_ave([pa_fitness, ma_fitness])
+    def calculate_ind_sc(self):
+        pa_sc = self._paternal.calculate_sc()
+        ma_sc = self._maternal.calculate_sc()
+        return calculate_ave([pa_sc, ma_sc])
 
     def copy_self(self):
         return copy.deepcopy(self)
 
-    def acquire_mutation(self, s=0.0):  # add mutation that raises fitness by s
+    def acquire_mutation(self, s=0.0):  # add mutation that raises sc by s
         r = random.random()
         c_self = self.copy_self()
         if r < 0.5:
@@ -141,12 +141,12 @@ def main():
     print(str(test[0] == test1[0]))
     print(test.get_repeatids())
     print(test.get_ind_genotypes())
-    print(test.calculate_ind_fitness())
+    print(test.calculate_ind_sc())
 
     test2 = test.acquire_mutation()
     print(test2.get_repeatids())
     print(test2.get_ind_genotypes())
-    print(test2.calculate_ind_fitness())
+    print(test2.calculate_ind_sc())
 
     test2 = test.slippage()
     print(test2.get_repeatids())

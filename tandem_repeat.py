@@ -20,29 +20,29 @@ class Tandem_repeat:
     def get_length(self):
         return len(self.__repeats)
 
-    def get_fitnesses(self):
-        fitness = [x.get_fitness() for x in self.__repeats]
-        return fitness
+    def get_scs(self):
+        sc = [x.get_sc() for x in self.__repeats]
+        return sc
 
     def get_genotypes(self):
         genotype = [x.get_genotype() for x in self.__repeats]
         return genotype
 
-    def calculate_fitness(self):
+    def calculate_sc(self):
         l = len(self.__repeats)
-        f = [x.get_fitness() for x in self.__repeats]
+        f = [x.get_sc() for x in self.__repeats]
         return sum(f)/l
 
-    def acquire_mutation(self, s=0.0):  # add mutation that raises fitness by s
+    def acquire_mutation(self, s=0.0):  # add mutation that raises sc by s
         i = random.randrange(len(self.__repeats))
         self.__repeats[i] = self.__repeats[i].acquire_mutation(s)
         return self
 
-    def slippage(self):
-        if 1 < self.get_length():
-            i = random.randrange(self.get_length())
-            self.__repeats.pop(i)
-        return self
+#    def slippage(self):
+#        if 1 < self.get_length():
+#            i = random.randrange(self.get_length())
+#            self.__repeats.pop(i)
+#        return self
 
     def select_partial(self, i, j=None):
         if j is None:
@@ -62,25 +62,25 @@ class Tandem_repeat:
 def main():
     repeat = Tandem_repeat(1, 5, 1)
     print(repeat.get_ids())
-    print(repeat.get_fitnesses())
+    print(repeat.get_scs())
     print(repeat.get_length())
     print(repeat.get_genotypes())
-    print(repeat.calculate_fitness())
+    print(repeat.calculate_sc())
     repeat2 = repeat.acquire_mutation(0.1)
     print(repeat2.get_ids())
-    print(repeat2.get_fitnesses())
+    print(repeat2.get_scs())
     print(repeat2.get_genotypes())
-    print(repeat2.calculate_fitness())
+    print(repeat2.calculate_sc())
     repeat3 = repeat2.acquire_mutation(0.2)
     print(repeat3.get_ids())
-    print(repeat3.get_fitnesses())
+    print(repeat3.get_scs())
     print(repeat3.get_genotypes())
-    print(repeat3.calculate_fitness())
+    print(repeat3.calculate_sc())
     repeat4 = repeat3.slippage()
     print(repeat4.get_ids())
-    print(repeat4.get_fitnesses())
+    print(repeat4.get_scs())
     print(repeat4.get_genotypes())
-    print(repeat4.calculate_fitness())
+    print(repeat4.calculate_sc())
     repeat = Tandem_repeat(1, 6, 0)
     print(repeat.get_ids())
     print(repeat.get_genotypes())

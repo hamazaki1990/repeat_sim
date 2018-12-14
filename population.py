@@ -34,8 +34,11 @@ class Population:
     def get_ind_ids(self):
         return [x.get_ind_id() for x in self._inds]
 
+    def get_ind_repeatlengths(self):
+        return [x.get_ind_repeatlength() for x in self._inds]
+
     def get_ind_fitnesses(self):
-        fitness = [x.calculate_ind_fitness() for x in self._inds]
+        fitness = [x.calculate_ind_sc() for x in self._inds]
         return fitness
 
     def get_monomer_fitnesses(self):
@@ -47,7 +50,7 @@ class Population:
         return genotypes
 
     def calc_cumsum_fitness(self):
-        fitness = [x.calculate_ind_fitness() for x in self._inds]
+        fitness = [x.calculate_ind_sc() for x in self._inds]
         size = len(self._inds)
         cumsum_fitness = [sum(fitness[:i]) for i in range(1, size + 1)]
         return cumsum_fitness
@@ -121,47 +124,55 @@ class Population:
             return False
 
 
-pprint.pprint("wf")
-test = Population(10, 3, 0.1, 0)
-pprint.pprint(test.get_ind_ids())
-pprint.pprint(test.get_repeat_ids())
-pprint.pprint(test.get_ind_genotypes())
-test2 = test.next_genwf()
-pprint.pprint(test2.get_ind_ids())
-pprint.pprint(test2.get_repeat_ids())
-pprint.pprint(test2.get_ind_genotypes())
-pprint.pprint(test2.is_not_fixed_ind())
-test3 = test2.next_genwf()
-pprint.pprint(test3.get_ind_ids())
-pprint.pprint(test3.get_repeat_ids())
-pprint.pprint(test3.get_ind_genotypes())
-pprint.pprint(test3.is_not_fixed_ind())
-pprint.pprint("mo")
-test = Population(10, 3, 0.1, 0)
-pprint.pprint(test.get_ind_ids())
-pprint.pprint(test.get_repeat_ids())
-pprint.pprint(test.get_ind_genotypes())
-test3 = test.next_genmo()
-pprint.pprint(test3.get_ind_ids())
-pprint.pprint(test3.get_repeat_ids())
-pprint.pprint(test3.get_ind_genotypes())
-pprint.pprint(test2.is_not_fixed_ind())
-pprint.pprint("fix_wf")
-test = Population(10, 3)
-while (test.is_not_fixed_ind() or test.is_not_fixed_rep()):
-    pprint.pprint(test.get_ind_ids())
-    pprint.pprint(test.get_repeat_ids())
-    pprint.pprint(test.get_ind_genotypes())
-    test = test.next_genwf()
-    print("ind_id")
-    for x in range(10):
-        print(test.get_ind_ids()[0] != test.get_ind_ids()[x])
-    print("repeat_id")
-    for x in range(10):
-        print(test.get_repeat_ids()[0] != test.get_repeat_ids()[x])
-    print("fix_ind:" + str(test.is_not_fixed_ind()))
-    print("fix_repeat:" + str(test.is_not_fixed_rep()))
-
-pprint.pprint(test.get_ind_ids())
-pprint.pprint(test.get_repeat_ids())
+def main():
+    print("100generation")
+    test = Population(5, 10)
+    for i in range(100):
+        pprint.pprint(test.get_ind_ids())
+        pprint.pprint(test.get_repeat_ids())
+        pprint.pprint(test.get_ind_repeatlengths())
+        test = test.next_genwf()
+# pprint.pprint("wf")
+# test = Population(10, 3, 0.1, 0)
+# pprint.pprint(test.get_ind_ids())
+# pprint.pprint(test.get_repeat_ids())
 # pprint.pprint(test.get_ind_genotypes())
+# test2 = test.next_genwf()
+# pprint.pprint(test2.get_ind_ids())
+# pprint.pprint(test2.get_repeat_ids())
+# pprint.pprint(test2.get_ind_genotypes())
+# pprint.pprint(test2.is_not_fixed_ind())
+# test3 = test2.next_genwf()
+# pprint.pprint(test3.get_ind_ids())
+# pprint.pprint(test3.get_repeat_ids())
+# pprint.pprint(test3.get_ind_genotypes())
+# pprint.pprint(test3.is_not_fixed_ind())
+# pprint.pprint("mo")
+# test = Population(10, 3, 0.1, 0)
+# pprint.pprint(test.get_ind_ids())
+# pprint.pprint(test.get_repeat_ids())
+# pprint.pprint(test.get_ind_genotypes())
+# test3 = test.next_genmo()
+# pprint.pprint(test3.get_ind_ids())
+# pprint.pprint(test3.get_repeat_ids())
+# pprint.pprint(test3.get_ind_genotypes())
+# pprint.pprint(test2.is_not_fixed_ind())
+
+# while (test.is_not_fixed_ind() or test.is_not_fixed_rep()):
+#     pprint.pprint(test.get_ind_ids())
+#     pprint.pprint(test.get_repeat_ids())
+#     pprint.pprint(test.get_ind_genotypes())
+#     print("ind_id")
+#     for x in range(10):
+#         print(test.get_ind_ids()[0] != test.get_ind_ids()[x])
+#     print("repeat_id")
+#     for x in range(10):
+#         print(test.get_repeat_ids()[0] != test.get_repeat_ids()[x])
+#     print("fix_ind:" + str(test.is_not_fixed_ind()))
+#     print("fix_repeat:" + str(test.is_not_fixed_rep()))
+
+
+# pprint.pprint(test.get_ind_genotypes())
+
+if __name__ == '__main__':
+    main()
