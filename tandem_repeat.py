@@ -38,11 +38,19 @@ class Tandem_repeat:
         self.__repeats[i] = self.__repeats[i].acquire_mutation(s)
         return self
 
-#    def slippage(self):
-#        if 1 < self.get_length():
-#            i = random.randrange(self.get_length())
-#            self.__repeats.pop(i)
-#        return self
+    def slippage(self):
+        if self.get_length() == 1:
+            pass
+        else:
+            r = random.random()
+            if r < 0.5:
+                i = random.randrange(self.get_length())
+                self.__repeats.pop(i)
+            else:
+                i = random.randrange(self.get_length())
+                dup = self.__repeats[i]
+                self.__repeats.insert(i, dup)
+        return self
 
     def select_partial(self, i, j=None):
         if j is None:
