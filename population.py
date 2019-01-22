@@ -1,14 +1,16 @@
 from diploid import Diploid
 from tandem_repeat import Tandem_repeat
-import random
+from numpy import random
+# import numpy as np
 import pprint
+# import matplotlib.pyplot as plt
 
 
-def roulettechoice(individuals, cumsum_fitness):
-    r = random.uniform(0.0, max(cumsum_fitness))
-    for i in range(len(cumsum_fitness)):
-        if r < cumsum_fitness[i]:
-            return individuals[i]
+# def roulettechoice(individuals, cumsum_fitness):
+#     r = random.uniform(0.0, max(cumsum_fitness))
+#     for i in range(len(cumsum_fitness)):
+#         if r < cumsum_fitness[i]:
+#             return individuals[i]
 
 
 class Population:
@@ -49,20 +51,21 @@ class Population:
         genotypes = [x.get_ind_genotypes() for x in self._inds]
         return genotypes
 
-    def calc_cumsum_fitness(self):
-        fitness = [x.calculate_ind_sc() for x in self._inds]
-        size = len(self._inds)
-        cumsum_fitness = [sum(fitness[:i]) for i in range(1, size + 1)]
-        return cumsum_fitness
+    # def calc_cumsum_fitness(self):
+    #     fitness = [x.calculate_ind_sc() for x in self._inds]
+    #     size = len(self._inds)
+    #     cumsum_fitness = [sum(fitness[:i]) for i in range(1, size + 1)]
+    #     return cumsum_fitness
 
     def next_genwf(self):
         next_generation = []
         size = len(self._inds)
         for x in range(size):
-            cf = self.calc_cumsum_fitness()
-            father = roulettechoice(self._inds, cf)
+            f = [x.calculate_ind_sc()/size for x in self._inds]
+            parent = random.choice(self._inds, 2, False, f)
+            father = parent[0]
+            mother = parent[1]
             next_p = father.replicate_error().make_zygote()
-            mother = roulettechoice(self._inds, cf)
             next_m = mother.replicate_error().make_zygote()
             next_generation.append(Diploid(next_p, next_m))
         self._inds = next_generation
@@ -71,10 +74,11 @@ class Population:
     def next_genmo(self):
         size = len(self._inds)
         i_dying = random.randrange(size)
-        cf = self.calc_cumsum_fitness()
-        father = roulettechoice(self._inds, cf)
+        f = [x.calculate_ind_sc()/size for x in self._inds]
+        parent = random.choice(self._inds, 2, False, f)
+        father = parent[0]
+        mother = parent[1]
         next_p = father.replicate_error().make_zygote()
-        mother = roulettechoice(self._inds, cf)
         next_m = mother.replicate_error().make_zygote()
         self._inds[i_dying] = Diploid(next_p, next_m)
         return self
@@ -125,12 +129,20 @@ class Population:
 
 
 def main():
+    # R = random.choice(range(10), 2, False)[1]
+    # for x in range(10000):
+    #     r = random.choice(range(10), 2, False)[1]
+    #     R = np.hstack((R, r))
+    # plt.hist(R, bins=100)   # 100本のヒストグラムを作成
+    # plt.show()              # グラフを表示
+
     print("100generation")
     test = Population(5, 10)
     for i in range(100):
         pprint.pprint(test.get_ind_ids())
         pprint.pprint(test.get_repeat_ids())
         pprint.pprint(test.get_ind_repeatlengths())
+        pprint.pprint(test.get_ind_fitnesses())
         test = test.next_genwf()
 # pprint.pprint("wf")
 # test = Population(10, 3, 0.1, 0)
