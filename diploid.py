@@ -42,7 +42,7 @@ class Diploid:
 
     def get_ind_scs(self):
         scs = [self._paternal.get_scs(),
-                     self._maternal.get_scs()]
+               self._maternal.get_scs()]
         return scs
 
     def get_ind_genotypes(self):
