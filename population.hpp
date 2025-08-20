@@ -8,12 +8,14 @@ class CPopulation
     std::vector<CIndividual> individuals;
 
     public:
-    CPopulation(unsigned int n, unsigned int m);
+    CPopulation(unsigned int n, unsigned int m, std::vector<CBase> monomer);
     std::vector<CIndividual> GetPopulation();
-    std::vector<unsigned int> GetIndIds();
+/*    std::vector<std::vector<unsigned int>> GetIndIds();  */
     std::vector<double> GetIndFitnesses();
     std::vector<std::vector<unsigned int>> GetIndRepeatsCN();
-    void NextGenWF();
-/*    void NextGenMo();
-*/
+    std::vector<std::vector<std::vector<std::vector<CBase>>>> GetIndRepeatsSeq();
+    void SetMigration(int i, CIndividual ind);
+    void NextGenWF(double duplicationrate, double deletionrate);
+/*    int ID_is_not_fixed();  */
+/*    void NextGenMo();   */
 };

@@ -1,12 +1,46 @@
 #include "population.hpp"
 #include <random>
+#include <algorithm>
 
-CPopulation::CPopulation(unsigned int n, unsigned int m)
+std::vector<double> cumsum_cal(std::vector<double> v){
+    int n = v.size();
+    std::vector<double> s(n, 0);
+    s[0] = v[0];
+    for (int i = 0; i < n; ++i){
+        s[i + 1] = s[i] + v[i + 1];
+    }
+    return s;
+}
+
+std::random_device rd3;
+std::mt19937 gen3(rd3());
+
+CIndividual roulettechoice(std::vector<CIndividual> inds, std::vector<double> s){
+    try{
+        if (inds.size() != s.size()){
+            throw "range error in cumsum_cal";
+        }
+    }
+    catch(char *str){
+        std::cout << str << std::endl;
+    }
+
+    std::uniform_real_distribution<> dist3(0.0, s.back());
+    double a = dist3(gen3);
+    int i = 0;
+    while (s[i] < a){
+        i++;
+    }
+    return inds[i];
+}
+
+
+CPopulation::CPopulation(unsigned int n, unsigned int m, std::vector<CBase> monomer)
 {
     std::vector<CIndividual> v;
     int i;
     for(i = 0; i < n; ++i){
-        v.push_back(CIndividual(i, m));
+        v.push_back(CIndividual(m, monomer));
     }
     individuals = v;
 }
@@ -15,93 +49,97 @@ std::vector<CIndividual> CPopulation::GetPopulation(){
     return individuals;
 }
 
-std::vector<unsigned int> CPopulation::GetIndIds(){
-    std::vector<unsigned int> ids;
+/*
+std::vector<std::vector<unsigned int>> CPopulation::GetIndIds(){
+    std::vector<std::vector<unsigned int>> ids;
     for(CIndividual x: individuals){
         ids.push_back(x.GetIndId());
     }
     return ids;
 }
+*/
 
 std::vector<double> CPopulation::GetIndFitnesses(){
-    std::vector<double> fitnesesses;
+    std::vector<double> fitnesses;
     for(CIndividual x: individuals){
-        fitnesesses.push_back(x.GetIndId());
+        fitnesses.push_back(x.GetIndFitness());
   }
-  return fitnesesses;
+  return fitnesses;
 }
 
 std::vector<std::vector<unsigned int>> CPopulation::GetIndRepeatsCN(){
-    std::vector<std::vector<unsigned int>> repeats;
+    std::vector<std::vector<unsigned int>> repeatCN;
     for(CIndividual x: individuals){
-        std::vector<unsigned int> v = {x.GetRepeat1CN(), x.GetRepeat2CN()};
-        repeats.push_back(v);
+        repeatCN.push_back(x.GetIndRepeatCN());
     }
-    return repeats;
+    return repeatCN;
+}
+
+std::vector<std::vector<std::vector<std::vector<CBase>>>> CPopulation::GetIndRepeatsSeq()
+{
+    std::vector<std::vector<std::vector<std::vector<CBase>>>> sequenses;
+    for(CIndividual x: individuals){
+        sequenses.push_back(x.GetIndRepeatSeq());
+    }
+    return sequenses;
+}
+
+void CPopulation::SetMigration(int i, CIndividual ind){
+    try
+    {
+        individuals.at(i);
+    }
+    catch (std::out_of_range)
+    {
+        std::cout << "population size error" << std::endl;
+    }
+    individuals.at(i) = ind;
 }
 
 
-std::random_device rd1;
-std::mt19937 gen1(rd1());
-std::random_device rd2;
-std::mt19937 gen2(rd2());
-std::uniform_real_distribution<> dist1(0.0, 1.0);
-
-void CPopulation::NextGenWF(){
+void CPopulation::NextGenWF(double duplicationrate, double deletionrate){
     int l = individuals.size();
-    std::uniform_int_distribution<> dist2(0, l-1);
+    std::vector<double> fitness;
+    for(CIndividual x: individuals){
+        fitness.push_back(x.GetIndFitness());
+    }
+    std::vector<double> cumsum = cumsum_cal(fitness);
     std::vector<CIndividual> next_generation;
     int i;
-    int a;
-    int b;
-    CIndividual parent1(0, 0);
-    CIndividual parent2(0, 0);
-    double c = dist1(gen1);
-    double d = dist1(gen1);
-    double e = dist1(gen1);
-    CRepeat zygote1(0, 0);
-    CRepeat zygote2(0, 0);
-    CIndividual *child;
+    CIndividual parent0(0, {});
+    CIndividual parent1(0, {});
+    CRepeat zygote0(0, {});
+    CRepeat zygote1(0, {});
+    CIndividual * child;
     for(i = 0; i < l; ++i){ /*このforループ内で子個体1つ作る*/
-        /*zygote 1*/
         /*親個体を選ぶ*/
-        a = dist2(gen2);
-        b = dist2(gen2);
-        parent1 = individuals[a];
-        parent2 = individuals[b];
 
-        /*変異を加える*/
-        c = dist1(gen1);
-        if(c < 0.5){
-            parent1.ChangeRepeat1CN(0.5, 0.5);
-        }else{
-            parent1.ChangeRepeat2CN(0.5, 0.5);
-        }
-        c = dist1(gen1);
-        if(c < 0.5){
-            parent2.ChangeRepeat1CN(0.5, 0.5);
-        }else{
-            parent2.ChangeRepeat2CN(0.5, 0.5);
-        }
+        parent0 = roulettechoice(individuals, cumsum);
+        parent1 = roulettechoice(individuals, cumsum);
+
 
         /*配偶子を作る*/
-        d = dist1(gen1);
-        e = dist1(gen1);
-        if((d < 0.5) && (e < 0.5)){
-            zygote1 = parent1.GetRepeat1();
-            zygote2 = parent2.GetRepeat1();
-        }else if(d < 0.5){
-            zygote1 = parent1.GetRepeat1();
-            zygote2 = parent2.GetRepeat2();
-        }else if(e < 0.5){
-            zygote1 = parent1.GetRepeat2();
-            zygote2 = parent2.GetRepeat1();
-        }else{
-            zygote1 = parent1.GetRepeat2();
-            zygote2 = parent2.GetRepeat2();
-        }
-        child = new CIndividual(a, b, zygote1, zygote2);
+        zygote0 = parent0.MakeZygote(duplicationrate, deletionrate);
+        zygote1 = parent1.MakeZygote(duplicationrate, deletionrate);
+
+        child = new CIndividual(zygote0, zygote1);
         next_generation.push_back(*child);
     }
     individuals = next_generation;
 }
+
+/*
+int CPopulation::ID_is_not_fixed(){
+    std::vector<std::vector<unsigned int>> ids;
+    for(CIndividual x: individuals){
+        ids.push_back(x.GetIndId());
+    }
+    if (std::adjacent_find(ids.begin(), ids.end(),
+        std::not_equal_to<std::vector<unsigned int>>()) == ids.end()){
+            return 0;
+    }
+    else{
+            return 1;
+    }
+}
+*/
